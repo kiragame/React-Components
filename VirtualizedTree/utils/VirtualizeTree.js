@@ -238,9 +238,13 @@ export default class VirtualizeTree {
       // 父级元素添加到halfCheck或check
       // 注：__treeKeyItemMap内无'root'
       // 从最近父节点开始处理，逐渐往上
-      for (let i = treeKeySplitLen - 2; i >= 1; i --) {
-        const pKey = treeKeySplit.slice(0, i + 1).join('-');
+      for (let i = treeKeySplitLen - 1; i >= 1; i --) {
+        const pKey = treeKeySplit.slice(0, i).join('-');
         const pRow = this.__treeKeyItemMap[pKey];
+        
+        if (!pRow) {
+          continue;
+        }
 
         // 该父级下已选中节点个数和该父级的子节点个数一致
         console.time('judge');
@@ -351,7 +355,9 @@ export default class VirtualizeTree {
     const checkedTreeKeys = new Set();
     const halfCheckedTreeKeys = new Set();
 
-    checkedKeys.filter(i => !!this.__rowKeyItemMap[i].treeKey).map(i => this.__rowKeyItemMap[i].treeKey).forEach(nTreeKey => {
+    const needCalTreeKeys = new Set();
+
+    checkedKeys.filter(i => !!this.__rowKeyItemMap[i]).map(i => this.__rowKeyItemMap[i].treeKey).forEach(nTreeKey => {
       if (checkedTreeKeys.has(nTreeKey)) {
         return;
       }
@@ -371,20 +377,27 @@ export default class VirtualizeTree {
       });
 
       // 父级元素添加到halfCheck或check
-      // 注：不let i = 0; 因为__treeKeyItemMap内无'root'
       // 从最近父节点开始处理，逐渐往上
       for (let i = treeKeySplitLen - 2; i >= 1; i --) {
         const pKey = treeKeySplit.slice(0, i + 1).join('-');
-        const pRow = this.__treeKeyItemMap[pKey];
-
-        // 该父级下已选中节点个数和该父级的子节点个数一致
-        if (Array.from(checkedTreeKeys).filter(i => i.includes(`${pKey}-`)).length === pRow.childRowCount) {
-          halfCheckedTreeKeys.delete(pKey);
-          checkedTreeKeys.add(pKey);
-        } else {
-          checkedTreeKeys.delete(pKey);
-          halfCheckedTreeKeys.add(pKey);
+        if (needCalTreeKeys.has(pKey)) {
+          break;
         }
+        needCalTreeKeys.add(pKey);
+      }
+    });
+
+    // 父级添加
+    // 注：不let i = 0; 因为__treeKeyItemMap内无'root'
+    Array.from(needCalTreeKeys).sort((a, b) => b.split('-') - a.split('-')).forEach(pKey => {
+      const pRow = this.__treeKeyItemMap[pKey];
+      // 该父级下已选中节点个数和该父级的子节点个数一致
+      if (Array.from(checkedTreeKeys).filter(item => item.includes(`${pKey}-`)).length === pRow.childRowCount) {
+        halfCheckedTreeKeys.delete(pKey);
+        checkedTreeKeys.add(pKey);
+      } else {
+        checkedTreeKeys.delete(pKey);
+        halfCheckedTreeKeys.add(pKey);
       }
     });
 
@@ -429,25 +442,44 @@ export default class VirtualizeTree {
 
   // 清除父级未展开的子级keys， TODO: 优化计算
   __filterExpandedKeys = (keys) => {
-    const retValue = [];
+    console.time('filter Expanded keys');
+    const retValue = new Set();
+
+    // 记录各层keys
+    const layerKeys = {};
+    let maxLayer = 1;
     keys.forEach(key => {
-      if (key === 'root') {
-        retValue.push('root');
-        return;
+      const splitLen = key.split('-').length;
+      if (!layerKeys[splitLen - 1]) {
+        layerKeys[splitLen - 1] = [];
+      }
+      layerKeys[splitLen - 1].push(key);
+      if (maxLayer < splitLen - 1) {
+        maxLayer = splitLen - 1;
+      }
+    });
+
+    for (let i = 0; i <= maxLayer; i ++) {
+      const nowLayerData = layerKeys[i];
+      if (!nowLayerData || nowLayerData.length === 0) {
+        break;
       }
 
-      // root-1  root-1-2  等这样匹配是否已展开
-      const splitPkeys = key.split('-');
-      const len = splitPkeys.length;
-      for (let i = len - 2; i >= 0; i --) {
-        const temp = splitPkeys.slice(0, i + 1).join('-');
-        if (!keys.includes(temp)) {
+      nowLayerData.forEach(key => {
+        if (key === 'root') {
+          retValue.add(key);
           return;
         }
-      }
-      retValue.push(key);
-    })
-    return retValue;
+  
+        const pCompare = key.substring(0, key.lastIndexOf('-'));
+        if (!retValue.has(pCompare)) {
+          return;
+        }
+        retValue.add(key);
+      });
+    }
+    console.timeEnd('filter Expanded keys');
+    return Array.from(retValue);
   }
 
   /** -------------------star 内部使用函数END star--------------------- */

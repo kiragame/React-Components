@@ -5,19 +5,76 @@
 ### 使用示例
 
 ```code
-{treeData && (
-  <VirtualizedTree
-    data={treeData}
-    dataSetting={this.treeDataSetting}
-    viewSetting={this.treeViewSetting}
-    checkable={true}
-    hasSearch={true}
-    treeNodeViewRender={this.treeNodeViewRender}
-    checkedKeys={checkedKeys}
-    defaultExpandedKeys={[1]}
-    onCheck={(g) => { this.setState({ checkedKeys: g.checkedKeys }) }}
-  />
-)}
+import React from 'react';
+import { Icon } from 'antd';
+import VirtualizedTree from '@/components/VirtualizedTree';
+import getTreeApi from '@/services/TreeService';
+
+class Demo extends React.PureComponent {
+
+  state = {
+    treeData: null,
+    checkedKeys: [],
+  }
+
+  treeDataSetting = {
+    dataKey: 'id',
+    dataViewKey: 'name',
+    childArrayKey: 'child',
+    hasChild: (i) => !!i.child,
+  }
+
+  treeViewSetting = {
+    clientHeight: 546,
+    clientWidth: 450,
+  }
+
+  treeNodeViewRender = (data) => {
+    return {
+      disableCheckbox: false,
+      disabled: false,
+      icon: <Icon type='book' />,
+      content: 'kiragame',
+    };
+  }
+
+  componentDidMount() {
+    getTreeApi().then(res => {
+      this.setState(() => {
+        return {
+          treeData: res.data[0] || {},
+        };
+      });
+    });
+  }
+
+  render() {
+
+    const { treeData, checkedKeys } = this.state;
+
+    return (
+      <React.Fragment>
+      <div style={{  display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+        {treeData && (
+          <VirtualizedTree
+            data={treeData}
+            dataSetting={this.treeDataSetting}
+            viewSetting={this.treeViewSetting}
+            checkable={true}
+            hasSearch={true}
+            treeNodeViewRender={this.treeNodeViewRender}
+            checkedKeys={checkedKeys}
+            defaultExpandedKeys={[1]}
+            onCheck={(g) => { this.setState({ checkedKeys: g.checkedKeys }) }}
+          />
+        )}
+      </div>        
+      </React.Fragment>
+    );
+  }
+}
+
+export default Demo;
 ```
 
 ### 参数说明

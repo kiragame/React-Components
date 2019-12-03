@@ -3,5 +3,6 @@
 # 概览
 
 ## 树形可视区域展示
-[效果图](https://github.com/kiragame/React-Components/blob/master/demo/VirtualizedTree.jpg)
-[README]()
+![Image text](https://github.com/kiragame/React-Components/blob/master/demo/VirtualizedTree.jpg)
+[README](https://github.com/kiragame/React-Components/tree/master/VirtualizedTree)
+

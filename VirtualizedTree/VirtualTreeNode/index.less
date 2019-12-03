@@ -1,0 +1,31 @@
+:global {
+  .v-tree-node {
+    height: 32.5px;
+    padding: 4px 0;
+    white-space: nowrap;
+    cursor: pointer;
+  }
+
+  .v-tree-icon {
+    width: 24px;
+    height: 24px;
+    line-height: 24px;
+    font-size: 1px;
+  }
+
+  .v-tree-content {
+    display: inline-block;
+    height: 24px;
+    margin: 0;
+    padding: 0 5px;
+    line-height: 24px;
+  }
+
+  .v-tree-content:active, .v-tree-content:hover, .v-tree-content:focus {
+    color: @primary-color;
+  }
+
+  .v-tree-content:hover {
+    background-color: rgba(85,132,255,.15);
+  }
+}

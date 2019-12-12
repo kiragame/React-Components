@@ -1,27 +1,5 @@
-# 可视区域  树形展示组件
-## 基于React、less编写的可视区域加载组件
-## 使用了 Ant Design的 Icon、message、Input 组件，可自行替换
+import { ReactNode } from "react";
 
-### 使用示例
-
-```code
-{treeData && (
-  <VirtualizedTree
-    data={treeData}
-    dataSetting={this.treeDataSetting}
-    viewSetting={this.treeViewSetting}
-    checkable={true}
-    hasSearch={true}
-    treeNodeViewRender={this.treeNodeViewRender}
-    checkedKeys={checkedKeys}
-    defaultExpandedKeys={[1]}
-    onCheck={(g) => { this.setState({ checkedKeys: g.checkedKeys }) }}
-  />
-)}
-```
-
-### 参数说明
-```code
 interface TreeNode {
   [key: string]: string
 }
@@ -85,6 +63,3 @@ export interface VirtualizedTree {
   // 内容区域点击回调函数
   onSelect?: (nodeData: TreeNode) => any;
 }
-```
-
-计算函数在utils里，欢迎优化、更新

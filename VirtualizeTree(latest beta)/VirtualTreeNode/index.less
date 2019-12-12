@@ -1,0 +1,44 @@
+:global {
+  .v-tree-node {
+    height: 32.5px;
+    padding: 4px 0;
+    white-space: nowrap;
+  }
+
+  .v-tree-icon {
+    width: 24px;
+    height: 24px;
+    line-height: 24px;
+    font-size: 10px;
+    transition: transform 0.3s;
+  }
+
+  .v-tree-icon-down {
+    transform: rotate(90deg);
+  }
+
+  .v-tree-content {
+    display: inline-block;
+    height: 24px;
+    margin: 0;
+    padding: 0 5px;
+    line-height: 24px;
+    text-overflow:ellipsis;
+    cursor: pointer;
+  }
+
+  .v-tree-content:hover {
+    background-color: rgba(85,132,255,.15);
+  }
+
+  .down {
+    transform: rotate(90deg);
+    transition: transform linear .25s;
+  }
+
+  .right {
+    transform: rotate(-90deg);
+    transition: transform linear .25s;
+  }
+
+}

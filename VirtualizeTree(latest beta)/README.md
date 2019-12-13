@@ -51,7 +51,7 @@ export interface VirtualizedTree {
     // 子节点键值  eg: { id: '1', child: [{id: '2'}]}, 则 childArrayKey: 'child'
     childArrayKey: string;
     // 异步加载数据函数，当且仅当为异步函数时图标才会有loading效果
-    loadData?: (data: TreeNode) => Promise<[]> | [];
+    loadData?: (data: TreeNode) => Promise<[]>;
     // 是否异步加载子节点, 该规则使用方可自己定义，  否则默认  false
     needLoadData?: (treeNode: TreeNode) => boolean;
   };
